@@ -38,6 +38,7 @@ module Pod
              'This takes precedence over the Swift versions specified by the spec or a `.swift-version` file'],
             ['--no-overwrite', 'Disallow pushing that would overwrite an existing spec'],
             ['--update-sources', 'Make sure sources are up-to-date before a push'],
+            ['--skip-lint', 'Skip lint step'],
           ].concat(super)
         end
 
@@ -59,6 +60,7 @@ module Pod
           @skip_import_validation = argv.flag?('skip-import-validation', false)
           @skip_tests = argv.flag?('skip-tests', false)
           @allow_overwrite = argv.flag?('overwrite', true)
+          @skip_lint = argv.flag?('skip-lint', false)
           super
         end
 
@@ -76,7 +78,7 @@ module Pod
           open_editor if @commit_message && @message.nil?
           check_if_push_allowed
           update_sources if @update_sources
-          validate_podspec_files
+          validate_podspec_files unless @skip_lint
           check_repo_status
           update_repo
           add_specs_to_repo
